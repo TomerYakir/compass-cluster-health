@@ -14,6 +14,9 @@ const GLOBALS = {
 
 module.exports = {
   target: 'electron-renderer',
+  externals: [
+    'canvas'
+  ],
   entry: {
     index: [
       // activate HMR for React
@@ -38,7 +41,7 @@ module.exports = {
   },
   resolve: {
     modules: ['node_modules'],
-    extensions: ['.js', '.jsx', '.json', 'less'],
+    extensions: ['.js', '.jsx', '.json', 'less','.node'],
     alias: {
       actions: path.join(project.path.src, 'actions'),
       components: path.join(project.path.src, 'components'),
@@ -121,6 +124,10 @@ module.exports = {
             name: 'assets/fonts/[name]__[hash:base64:5].[ext]'
           }
         }]
+      },
+      {
+        test: /.node$/,
+        use: 'node-loader',
       }
     ]
   },
