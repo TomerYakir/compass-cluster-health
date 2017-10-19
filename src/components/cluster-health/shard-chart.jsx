@@ -1,10 +1,7 @@
 import React, { PureComponent } from 'react';
 import VegaLite from 'react-vega-lite';
-
-
-//styles
-//import classnames from 'classnames';
-//import styles from './shard-overview.less';
+import classnames from 'classnames';
+import styles from './shard-overview.less';
 
 class ShardChart extends PureComponent {
   constructor(props) {
@@ -64,19 +61,21 @@ class ShardChart extends PureComponent {
     };
     const barSpec = this.getBarSpec();
     return (
-      <div className="cluster-column">
-        <div className="shard-container">
-          <div className="shard-information">
-            <span className="shard-name">
+      <li className={classnames(styles['list-group-item'])}>
+        <div>
+          <div className={classnames('col-md-3', styles['shard-container'])}>
+            <span className={classnames(styles['shard-name'])}>
               {this.props.name}
             </span>
-            <span className="shard-size">
+            <span className={classnames(styles['shard-size'])}>
               {this.props.size} GB
             </span>
           </div>
+          <div className="col-md-9">
+            <VegaLite className="shard-chart" data={data} spec={barSpec} width={150} height={42} />
+          </div>
         </div>
-        <VegaLite className="shard-chart" data={data} spec={barSpec} width={190} height={42} />
-      </div>
+      </li>
     );
   }
 }

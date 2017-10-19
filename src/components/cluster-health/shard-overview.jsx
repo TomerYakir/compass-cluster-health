@@ -111,7 +111,9 @@ class ShardOverview extends Component {
         </div>
         <div className="row">
           <div className="col-md-12">
-            {this._getShardCharts()}
+            <ul className={classnames(styles['list-group-horizontal'])}>
+              {this._getShardCharts()}
+            </ul>
           </div>
         </div>
       </div>
