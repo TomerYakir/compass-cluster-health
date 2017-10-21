@@ -11,6 +11,13 @@ class ShardChart extends PureComponent {
   getBarSpec() {
     return {
       mark: 'bar',
+      config: {
+        axis: {
+          titleColor: '#aaa',
+          titleFontWeight: 'normal',
+          titleFontSize: 10
+        }
+      },
       encoding: {
         y: {field: 'category',
            type: 'ordinal',
@@ -61,9 +68,9 @@ class ShardChart extends PureComponent {
     };
     const barSpec = this.getBarSpec();
     return (
-      <li className={classnames(styles['list-group-item'])}>
+      <li className={classnames(styles['list-group-item'], styles['shard-container'])}>
         <div>
-          <div className={classnames('col-md-3', styles['shard-container'])}>
+          <div className={classnames('col-md-4')}>
             <span className={classnames(styles['shard-name'])}>
               {this.props.name}
             </span>
@@ -71,8 +78,8 @@ class ShardChart extends PureComponent {
               {this.props.size} GB
             </span>
           </div>
-          <div className="col-md-9">
-            <VegaLite className="shard-chart" data={data} spec={barSpec} width={150} height={42} />
+          <div className="col-md-8">
+            <VegaLite className="shard-chart" data={data} spec={barSpec} width={100} height={42} />
           </div>
         </div>
       </li>

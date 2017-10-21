@@ -7,24 +7,8 @@ import styles from './shard-overview.less';
 
 class ShardOverview extends Component {
 
-  getMockProps() {
-    return {
-      numberOfShards: 3,
-      balancerState: "Disabled",
-      balancerRunning: false,
-      totalSize: 12.5,
-      shards: {
-        "Shard_0": {
-          "size": 4.5
-        },
-        "Shard_1": {
-          "size": 5.5
-        },
-        "Shard_2": {
-          "size": 2.5
-        }
-      }
-    }
+  constructor(props) {
+    super(props);
   }
 
   _handleRefresh() {
@@ -67,12 +51,7 @@ class ShardOverview extends Component {
     return this.props.balancerRunning ? "cluster-balancer-enabled" : "cluster-balancer-notrunning";
   }
 
-  _getShardBalancerWarningIcon() {
-    return "" // TODO
-  }
-
   render() {
-    this.props = this.getMockProps();
     const shardTooltip = {"id": ""};
     const balancerRunningTooltip = {"id": ""};
     return (

@@ -1,0 +1,14 @@
+.tooltip {
+   background-color:#000;
+   border:none;
+   border-radius:unset;
+   min-width:100px;
+   width:100%;
+   max-width:500px;
+   opacity: 1 !important;
+
+}
+
+.badge-spacing {
+  margin-left: 10px;
+}
