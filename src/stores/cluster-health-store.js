@@ -25,7 +25,7 @@ const ClusterHealthStore = Reflux.createStore({
     balancerErrors: [],
     shards: {},
     numberOfShardedCollections: 0,
-    collections: []
+    collections: {}
   },
 
   init() {
@@ -63,12 +63,6 @@ const ClusterHealthStore = Reflux.createStore({
 
   returnPromise(func, arg) {
     return new Promise(func.bind(this, arg));
-  },
-
-  promiseSerial(funcs) {
-    funcs.reduce((promise, func) =>
-      promise.then(result => func().then(Array.prototype.concat.bind(result))),
-      Promise.resolve([]))
   },
 
   getBalancerEnabled(arg, resolve, reject) {
@@ -117,13 +111,13 @@ const ClusterHealthStore = Reflux.createStore({
     })
   },
 
-  loadBalancerStats() {
+  loadBalancerStats(arg, resolve, reject) {
     Promise.all([
         this.returnPromise(this.getBalancerEnabled),
         this.returnPromise(this.getBalancerRunningByLocks),
         this.returnPromise(this.getBalancerRunningByAdminCmd)
     ]).then(() => {
-      this.setState(this.data);
+      resolve(true);
     })
   },
 
@@ -147,7 +141,8 @@ const ClusterHealthStore = Reflux.createStore({
           const shardObj = documents[shard];
           this.data.shards[shardObj['_id']] = {
             hosts: shardObj['host'],
-            size: 0
+            size: 0,
+            databaseSizes: []
           }
         }
         this.data.totalSize = 0;
@@ -158,13 +153,12 @@ const ClusterHealthStore = Reflux.createStore({
   getShardDatabaseSize(arg, resolve, reject) {
     const gbScale = 1024 * 1024 * 1024;
     this.dataService.command(arg,{dbStats : 1, scale: gbScale},(error, results) => {
-      for (var shardKey in results["raw"]) {
-        const shardObj = results["raw"][shardKey];
-        if (shardKey.indexOf('/') > 0) {
-          shardKey = shardKey.split('/')[0];
+      for (var shard in results["raw"]) {
+        const shardObj = results["raw"][shard];
+        if (shard.indexOf('/') > 0) {
+          shard = shard.split('/')[0];
         }
-        this.data.shards[shardKey]["size"] += shardObj.dataSize + shardObj.indexSize;
-        this.data["totalSize"] += shardObj.dataSize + shardObj.indexSize;
+        this.data.shards[shard]["databaseSizes"].push(shardObj.dataSize + shardObj.indexSize);
       }
       resolve(true);
     });
@@ -196,27 +190,94 @@ const ClusterHealthStore = Reflux.createStore({
     });
   },
 
-  loadShardOverviewStats() {
+  loadShardOverviewStats(arg, resolve, reject) {
     this.returnPromise(this.getShardNamesHosts).then(
       () => {
         this.returnPromise(this.getShardSizes).then(() => {
-            debugger;
+            let totalSize = 0;
             for (const shard in this.data.shards) {
-              this.data.shards[shard].size = this.data.shards[shard].size.toFixed(4); 
+              let shardSize = this.data.shards[shard].databaseSizes.reduce((accumulator, value) => {return accumulator + value});
+              totalSize += shardSize;
+              this.data.shards[shard].size = shardSize.toFixed(4);
             }
-            this.data.totalSize = this.data.totalSize.toFixed(4);
-            this.setState(this.data);
+            this.data.totalSize = totalSize.toFixed(4);
+            this.data.numberOfShards = Object.keys(this.data.shards).length
+            resolve(true);
         })
       }
     )
+  },
+
+  getCollectionDistributionStats(arg, resolve, reject) {
+    this.dataService.shardedCollectionDetail(arg["name"], (err, result) => {
+      let shardDistribution = [];
+      for (var shard in result["shards"]) {
+        const shardObj = result["shards"][shard];
+        shardDistribution.push({
+          shard: shard,
+          chunks: shardObj["estimatedDataPercent"],
+          avgObjSize: shardObj["avgObjSize"],
+          count: shardObj["count"],
+          estimatedDataPerChunk: shardObj["estimatedDataPerChunk"].toFixed(2),
+          estimatedDocPercent: shardObj["estimatedDocPercent"],
+          estimatedDocsPerChunk: shardObj["estimatedDocsPerChunk"]
+        });
+      }
+      this.data.collections[result["_id"]]["chunkDistribution"] = shardDistribution;
+      resolve(true);
+    });
+  },
+
+  getCollectionStats(arg, resolve, reject) {
+    const collection = "config.collections";
+    const filter = {};
+    const sort = [[ '_id', 1 ]];
+    const limit = 0;
+    const project = {"lastmodEpoc" : 0, "lastmod" : 0}
+    const findOptions = {
+        sort: sort,
+        fields: project,
+        limit: limit,
+        promoteValues: false
+      };
+      this.dataService.find(collection, filter, findOptions, (error, documents) => {
+        this.data.numberOfShardedCollections = documents.length;
+        this.data.collections = {};
+        let collDistPromises = [];
+        for (const idx in documents) {
+          const collection = documents[idx];
+          const collObj = {
+            "name": collection["_id"],
+            "shardKey": JSON.stringify(collection["key"]),
+            "chunkDistribution": []
+          }
+          this.data.collections[collObj.name] = collObj;
+          collDistPromises.push(this.returnPromise(this.getCollectionDistributionStats, collObj))
+        }
+        Promise.all(collDistPromises).then(() => {
+            resolve(true);
+          }
+        )
+      });
+  },
+
+  loadCollectionStats(arg, resolve, reject) {
+    this.returnPromise(this.getCollectionStats).then(() => {
+      resolve(true);
+    })
   },
 
   loadData() {
     if (this.compass && !this.dataService.isMongos()) {
       this.deregisterFromCompass();
     } else {
-      this.loadBalancerStats();
-      this.loadShardOverviewStats();
+      Promise.all([
+          this.returnPromise(this.loadBalancerStats),
+          this.returnPromise(this.loadShardOverviewStats),
+          this.returnPromise(this.loadCollectionStats)
+      ]).then(() => {
+        this.setState(this.data)
+      })
     }
   },
 
@@ -258,8 +319,8 @@ const ClusterHealthStore = Reflux.createStore({
         }
       },
       numberOfShardedCollections: 2,
-      collections: [
-        {
+      collections: {
+        "Events": {
           name: "Events",
           shardKey: "{userId: 1, type: 1, timestamp: 1}",
           chunkDistribution: [
@@ -295,7 +356,7 @@ const ClusterHealthStore = Reflux.createStore({
               }
           ]
         },
-        {
+        "Files": {
           name: "Files",
           shardKey: "{region: 1, extension: 1}",
           chunkDistribution: [
@@ -331,7 +392,7 @@ const ClusterHealthStore = Reflux.createStore({
               }
           ]
         }
-      ]
+      }
     }
   }
 

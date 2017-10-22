@@ -23,7 +23,8 @@ class ShardCollectionsList extends Component {
   }
 
   getChunksInfo(collection) {
-    return collection.chunkDistribution.map(function(shard) {
+    return Object.keys(collection.chunkDistribution).map(function(key) {
+      const shard = collection.chunkDistribution[key];
       return (
         <tr key={shard["shard"]}>
             <td><strong>{shard["shard"]}</strong></td>
@@ -74,7 +75,8 @@ class ShardCollectionsList extends Component {
 
   getCollections() {
     return (
-      this.props.collections.map((collection) => {
+      Object.keys(this.props.collections).map((key) => {
+        const collection = this.props.collections[key];
         return (
           <li
             key={collection.name}
