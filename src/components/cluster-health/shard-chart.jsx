@@ -2,10 +2,22 @@ import React, { PureComponent } from 'react';
 import VegaLite from 'react-vega-lite';
 import classnames from 'classnames';
 import styles from './shard-overview.less';
+import { Tooltip, OverlayTrigger } from 'react-bootstrap';
+import './tooltip.css';
 
 class ShardChart extends PureComponent {
   constructor(props) {
     super(props);
+  }
+
+  getShardTooltip() {
+    return (
+        <Tooltip id="shardTooltip" placement="bottom">
+          <div className="align-left">
+            Hosts: {this.props.hosts}
+          </div>
+        </Tooltip>
+      )
   }
 
   getBarSpec() {
@@ -68,17 +80,21 @@ class ShardChart extends PureComponent {
     };
     const barSpec = this.getBarSpec();
     return (
-      <li className={classnames(styles['list-group-item'], styles['shard-container'])}>
+      <li className={classnames(styles['list-group-item-cstm'], styles['shard-container'])}>
         <div>
-          <div className={classnames('col-md-4')}>
+          <div className={classnames('col-md-5')}>
             <span className={classnames(styles['shard-name'])}>
               {this.props.name}
+              <OverlayTrigger placement="bottom" overlay={this.getShardTooltip()}>
+                <i className="fa fa-info help-icon" />
+              </OverlayTrigger>
             </span>
             <span className={classnames(styles['shard-size'])}>
               {this.props.size} GB
             </span>
+
           </div>
-          <div className="col-md-8">
+          <div className="col-md-7">
             <VegaLite className="shard-chart" data={data} spec={barSpec} width={100} height={42} />
           </div>
         </div>

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { OverlayTrigger } from 'react-bootstrap';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import ShardChart from './shard-chart';
 
 import classnames from 'classnames';
@@ -18,13 +18,15 @@ class ShardOverview extends Component {
   _getShardCharts() {
       if (this.props.shards) {
         return Object.keys(this.props.shards).map(function(shard) {
+          const shardObj = this.props.shards[shard];
           return (
             <ShardChart
               key={shard}
               name={shard}
-              size={this.props.shards[shard]["size"]}
-              numberOfShards = {this.props.numberOfShards}
-              totalSize = {this.props.totalSize} />
+              size={shardObj.size}
+              numberOfShards={this.props.numberOfShards}
+              hosts={shardObj.hosts}
+              totalSize={this.props.totalSize} />
           )
         },this)
       } else {
@@ -44,12 +46,48 @@ class ShardOverview extends Component {
   }
 
   _getShardBalancerStateClass() {
-    return this.props.balancerState == "Enabled" ? "cluster-balancer-enabled" : "cluster-balancer-disabled";
+    return this.props.balancerEnabled ? "cluster-balancer-enabled" : "cluster-balancer-disabled";
   }
 
   _getShardBalancerRunningClass() {
     return this.props.balancerRunning ? "cluster-balancer-enabled" : "cluster-balancer-notrunning";
   }
+
+  getBalancerTooltip() {
+    if (this.props.balancerLockedWhen) {
+      return (
+        <Tooltip id="balancerRunningTooltip">
+          <div className="align-left">
+            <strong>Locked By:</strong> {this.props.balancerLockedBy}<br></br>
+            <strong>Locked At:</strong> {this.props.balancerLockedWhen}<br></br>
+            <strong>Reason for locking:</strong> {this.props.balancerLockedWhy}<br></br>
+            <strong>Latest balancer errors:</strong><br></br>
+            {this._getBalancerErrors()}
+          </div>
+        </Tooltip>
+      );
+    } else {
+      return (
+        <Tooltip id="balancerRunningTooltip">
+          <div>
+            Balancer not running
+          </div>
+        </Tooltip>
+      )
+    }
+  }
+
+  _getBalancerErrors() {
+    if (this.props.balancerErrors) {
+      return this.props.balancerErrors.map(function(balancerError) {
+        return (
+          <div key={balancerError.time}>
+          {balancerError.time + " " + balancerError.details.errmsg}
+          </div>
+        );
+      })
+    }
+  };
 
   render() {
     const shardTooltip = {"id": ""};
@@ -67,19 +105,21 @@ class ShardOverview extends Component {
               {this._getNumberOfShards()}
             </span>
           </div>
-          <div className="col-md-4">
-            <span>
-              Balancer:
-            </span>
-            <span className={classnames('badge', styles['badge-spacing'],
-                             styles['to-upper'], styles[this._getShardBalancerStateClass()])}>
-              {this.props.balancerState}
-            </span>
-            <span className={classnames('badge',styles['badge-spacing'],
-                             styles['to-upper'], styles[this._getShardBalancerRunningClass()])}>
-              {this.props.balancerRunning ? "Running" : "Not Running"}
-            </span>
-          </div>
+          <OverlayTrigger placement="bottom" overlay={this.getBalancerTooltip()}>
+            <div className="col-md-4">
+              <span>
+                Balancer:
+              </span>
+              <span className={classnames('badge', styles['badge-spacing'],
+                               styles['to-upper'], styles[this._getShardBalancerStateClass()])}>
+                {this.props.balancerEnabled ? "Enabled": "Disabled"}
+              </span>
+              <span className={classnames('badge',styles['badge-spacing'],
+                               styles['to-upper'], styles[this._getShardBalancerRunningClass()])}>
+                {this.props.balancerRunning ? "Running" : "Not Running"}
+              </span>
+            </div>
+          </OverlayTrigger>
         </div>
         <div className="row">
           <div className="col-md-12">

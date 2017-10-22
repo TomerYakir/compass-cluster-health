@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import classnames from 'classnames';
 import styles from './shard-collections-list.less';
 import CollectionChunkDistribution from './collection-chunk-distribution';
-import { Tooltip } from 'react-bootstrap';
-import { OverlayTrigger } from 'react-bootstrap';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import './tooltip.css';
 
 class ShardCollectionsList extends Component {
@@ -42,7 +41,7 @@ class ShardCollectionsList extends Component {
     if (collection)
     {
       return (
-        <Tooltip id="distTooltip" >
+        <Tooltip id="distTooltip" placement="right">
           <div>
             <table className="table">
               <thead>
@@ -83,15 +82,14 @@ class ShardCollectionsList extends Component {
             >
             <div className="col-md-12">
               <div className="col-md-5">
-
+                <span>
+                  {collection.name}
+                </span>
                 <OverlayTrigger placement="right" overlay={this.getCollectionTooltip(collection)}>
-                  <span>
-                    {collection.name}
-                  </span>
+                  <span><i className="fa fa-info help-icon"> </i></span>
                 </OverlayTrigger>
-                <span><i className="fa fa-info badge-spacing"> </i></span>
                 <div>
-                  <code>{collection.shardKey}</code>
+                  Shard Key: <code>{collection.shardKey}</code>
                 </div>
               </div>
               <div className="col-md-7">

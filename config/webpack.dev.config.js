@@ -144,6 +144,9 @@ module.exports = {
     // Creates HTML page for us at build time
     new HtmlWebpackPlugin(),
 
+    // Ignore vertx
+    new webpack.IgnorePlugin(/vertx/),
+
     // Defines global variables
     new webpack.DefinePlugin(GLOBALS)
   ],

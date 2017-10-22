@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { StoreConnector } from 'hadron-react-components';
 import ClusterHealth from 'components/cluster-health';
+import ClusterHealthStore from 'stores/cluster-health-store';
 import 'bootstrap/dist/css/bootstrap.css';
-// import { QueryHistoryStore } from 'stores';
-//import Actions from 'actions';
+import Actions from 'actions';
 
 class Plugin extends Component {
   static displayName = 'ClusterHealthPlugin';
@@ -15,9 +15,9 @@ class Plugin extends Component {
    */
   render() {
     return (
-      <div>
-        <ClusterHealth />
-      </div>
+      <StoreConnector store={ClusterHealthStore}>
+        <ClusterHealth actions={Actions} {...this.props} />
+      </StoreConnector>
     )
     /*
     return (
