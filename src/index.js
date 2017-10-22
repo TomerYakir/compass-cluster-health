@@ -17,26 +17,12 @@ const INSTANCE_TAB_ROLE = {
   order: 3
 };
 
-
 function activate(appRegistry) {
   // Register RecentQueryCollection
   appRegistry.registerRole('Instance.Tab', INSTANCE_TAB_ROLE);
 
-
   // Register Stores
   appRegistry.registerStore('ClusterHealth.Store', ClusterHealthStore);
-  /*
-  appRegistry.registerStore('QueryHistory.Store', QueryHistoryStore);
-  appRegistry.registerStore('QueryHistory.RecentListStore', RecentListStore);
-  appRegistry.registerStore('QueryHistory.FavoriteListStore', FavoriteListStore);
-
-  // Register Components
-  appRegistry.registerComponent('QueryHistory.Component', QueryHistoryPlugin);
-  appRegistry.registerComponent('QueryHistory.ShowQueryHistoryButton', ToggleQueryHistoryButton);
-
-  // Register Actions
-  appRegistry.registerAction('QueryHistory.Actions', QueryHistoryActions);
-  */
 }
 
 /**
@@ -44,21 +30,9 @@ function activate(appRegistry) {
  * @param {Object} appRegistry - The Hadron appRegisrty to deactivate this plugin with.
  **/
 function deactivate(appRegistry) {
-  appRegistry.deregisterRole('Instance.Tab', INSTANCE_TAB_ROLE)
+  appRegistry.deregisterRole('Instance.Tab', INSTANCE_TAB_ROLE);
   // De-register Stores
   appRegistry.deregisterStore('ClusterHealth.Store');
-  /*
-  appRegistry.deregisterStore('QueryHistory.Store');
-  appRegistry.deregisterStore('QueryHistory.RecentListStore');
-  appRegistry.deregisterStore('QueryHistory.FavoriteListStore');
-
-  // De-register Components
-  appRegistry.deregisterComponent('QueryHistory.Component');
-  appRegistry.deregisterComponent('QueryHistory.ShowQueryHistoryButton');
-
-  // De-register Actions
-  appRegistry.deregisterAction('QueryHistory.Actions');
-  */
 }
 
 export default ClusterHealthPlugin;

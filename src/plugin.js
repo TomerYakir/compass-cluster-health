@@ -18,14 +18,7 @@ class Plugin extends Component {
       <StoreConnector store={ClusterHealthStore}>
         <ClusterHealth actions={Actions} {...this.props} />
       </StoreConnector>
-    )
-    /*
-    return (
-      <StoreConnector store={QueryHistoryStore}>
-        <QueryHistory actions={Actions} {...this.props} />
-      </StoreConnector>
     );
-    */
   }
 }
 

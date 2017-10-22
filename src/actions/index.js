@@ -1,8 +1,7 @@
 import Reflux from 'reflux';
 
 const Actions = Reflux.createActions([
-  'refresh',
-  'loadDataFromServer'
+  'refresh'
 ]);
 
 export default Actions;

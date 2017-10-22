@@ -3,22 +3,28 @@ import classnames from 'classnames';
 import styles from './shard-collections-list.less';
 import CollectionChunkDistribution from './collection-chunk-distribution';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+import PropTypes from 'prop-types';
 import './tooltip.css';
 
 class ShardCollectionsList extends Component {
+  static propTypes = {
+    collections: PropTypes.object,
+    numberOfShardedCollections: PropTypes.number,
+    numberOfShards: PropTypes.number
+  };
+
   constructor(props) {
     super(props);
   }
-
 
   getShardedCollectionsNumber() {
     const { numberOfShardedCollections } = this.props;
     if (numberOfShardedCollections > 1) {
       return `${numberOfShardedCollections} Sharded Collections`;
-    } else if (numberOfShardedCollections == 1) {
-      return "1 Sharded Collection";
+    } else if (numberOfShardedCollections === 1) {
+      return '1 Sharded Collection';
     } else {
-      return "Unknown";
+      return 'Unknown';
     }
   }
 
@@ -26,21 +32,20 @@ class ShardCollectionsList extends Component {
     return Object.keys(collection.chunkDistribution).map(function(key) {
       const shard = collection.chunkDistribution[key];
       return (
-        <tr key={shard["shard"]}>
-            <td><strong>{shard["shard"]}</strong></td>
-            <td>{shard["avgObjSize"]}</td>
-           <td>{shard["count"]}</td>
-          <td>{shard["estimatedDataPerChunk"]}</td>
-          <td>{shard["estimatedDocPercent"]}</td>
-          <td>{shard["estimatedDocsPerChunk"]}</td>
+        <tr key={shard.shard}>
+            <td><strong>{shard.shard}</strong></td>
+            <td>{shard.avgObjSize}</td>
+           <td>{shard.count}</td>
+          <td>{shard.estimatedDataPerChunk}</td>
+          <td>{shard.estimatedDocPercent}</td>
+          <td>{shard.estimatedDocsPerChunk}</td>
         </tr>
       );
-    },this)
+    }, this);
   }
 
   getCollectionTooltip(collection) {
-    if (collection)
-    {
+    if (collection) {
       return (
         <Tooltip id="distTooltip" placement="right">
           <div>
@@ -62,15 +67,14 @@ class ShardCollectionsList extends Component {
           </div>
         </Tooltip>
       );
-    } else {
-      return (
-        <Tooltip id="distTooltip">
-          <div>
-                Loading...
-          </div>
-        </Tooltip>
-      );
     }
+    return (
+      <Tooltip id="distTooltip">
+        <div>
+              Loading...
+        </div>
+      </Tooltip>
+    );
   }
 
   getCollections() {
@@ -80,10 +84,10 @@ class ShardCollectionsList extends Component {
         return (
           <li
             key={collection.name}
-            className={classnames('list-group-item', styles['collection'])}
+            className={classnames('list-group-item', styles.collection)}
             >
             <div className="col-md-12">
-              <div className="col-md-5">
+              <div className="col-md-3">
                 <span>
                   {collection.name}
                 </span>
@@ -94,15 +98,18 @@ class ShardCollectionsList extends Component {
                   Shard Key: <code>{collection.shardKey}</code>
                 </div>
               </div>
-              <div className="col-md-7">
-                <CollectionChunkDistribution chunkDistribution={collection.chunkDistribution} />
+              <div className="col-md-8">
+                <CollectionChunkDistribution
+                  chunkDistribution={collection.chunkDistribution}
+                  numberOfShards={this.props.numberOfShards}
+                  />
               </div>
             </div>
 
           </li>
-        )
+        );
       }, this)
-    )
+    );
   }
 
   render() {
@@ -120,7 +127,7 @@ class ShardCollectionsList extends Component {
           </ul>
         </div>
       </div>
-    )
+    );
   }
 }
 

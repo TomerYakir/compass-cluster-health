@@ -48,6 +48,7 @@
     "node-loader": "^0.6.0",
     "react-bootstrap": "^0.31.3",
     "react-fontawesome": "^1.6.1",
+    "react-vega": "^3.1.1",
     "react-vega-lite": "^1.1.2",
     "vega": "^3.0.6",
     "vega-lite": "^2.0.0-rc4"

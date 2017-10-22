@@ -41,7 +41,7 @@ module.exports = {
   },
   resolve: {
     modules: ['node_modules'],
-    extensions: ['.js', '.jsx', '.json', 'less','.node'],
+    extensions: ['.js', '.jsx', '.json', 'less', '.node'],
     alias: {
       actions: path.join(project.path.src, 'actions'),
       components: path.join(project.path.src, 'components'),
@@ -127,7 +127,7 @@ module.exports = {
       },
       {
         test: /.node$/,
-        use: 'node-loader',
+        use: 'node-loader'
       }
     ]
   },

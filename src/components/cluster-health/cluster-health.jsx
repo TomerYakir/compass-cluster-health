@@ -10,11 +10,11 @@ class ClusterHealth extends Component {
 
   render() {
     return (
-      <div className="container-fluid">
+      <div className="container">
         <ShardOverview {...this.props} />
         <ShardCollectionsList {...this.props} />
       </div>
-    )
+    );
   }
 }
 

@@ -35,7 +35,7 @@ module.exports = {
   },
   resolve: {
     modules: ['node_modules'],
-    extensions: ['.js', '.jsx', '.json', 'less','.node'],
+    extensions: ['.js', '.jsx', '.json', 'less', '.node'],
     alias: {
       actions: path.join(project.path.src, 'actions'),
       components: path.join(project.path.src, 'components'),
@@ -121,7 +121,7 @@ module.exports = {
       },
       {
         test: /.node$/,
-        use: 'node-loader',
+        use: 'node-loader'
       }
     ]
   },
@@ -156,7 +156,7 @@ module.exports = {
 
     // An ES6+ aware minifier, results in smaller output compared to UglifyJS given that
     // Chromium in electron supports the majority of ES6 features out of the box.
-    new MinifyPlugin()
+    new MinifyPlugin() // this significantly slows down the prod build!
 
     // Analyze the bundle size
     // new BundleAnalyzerPlugin()

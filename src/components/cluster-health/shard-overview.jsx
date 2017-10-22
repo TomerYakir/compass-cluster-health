@@ -1,56 +1,65 @@
 import React, { Component } from 'react';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import ShardChart from './shard-chart';
-
 import classnames from 'classnames';
 import styles from './shard-overview.less';
+import PropTypes from 'prop-types';
 
 class ShardOverview extends Component {
+  static propTypes = {
+    shards: PropTypes.object,
+    balancerEnabled: PropTypes.bool,
+    balancerRunning: PropTypes.bool,
+    balancerLockedWhen: PropTypes.object,
+    balancerLockedBy: PropTypes.string,
+    balancerLockedWhy: PropTypes.string,
+    balancerErrors: PropTypes.array,
+    numberOfShards: PropTypes.number,
+    totalSize: PropTypes.number,
+    actions: PropTypes.object,
+    'actions.refresh': PropTypes.func
+  };
 
   constructor(props) {
     super(props);
+    this.handleRefresh = this.handleRefresh.bind(this);
   }
 
-  _handleRefresh() {
-    // TODO
-  }
-
-  _getShardCharts() {
-      if (this.props.shards) {
-        return Object.keys(this.props.shards).map(function(shard) {
-          const shardObj = this.props.shards[shard];
-          return (
-            <ShardChart
-              key={shard}
-              name={shard}
-              size={shardObj.size}
-              numberOfShards={this.props.numberOfShards}
-              hosts={shardObj.hosts}
-              totalSize={this.props.totalSize} />
-          )
-        },this)
-      } else {
-        return null;
-      }
+  getShardCharts() {
+    if (this.props.shards) {
+      return Object.keys(this.props.shards).map(function(shard) {
+        const shardObj = this.props.shards[shard];
+        return (
+          <ShardChart
+            key={shard}
+            name={shard}
+            size={shardObj.size}
+            numberOfShards={this.props.numberOfShards}
+            hosts={shardObj.hosts}
+            totalSize={this.props.totalSize} />
+        );
+      }, this);
     }
+    return null;
+  }
 
-  _getNumberOfShards() {
+  getNumberOfShards() {
     const { numberOfShards } = this.props;
     if (numberOfShards > 1) {
       return `${numberOfShards} Shards`;
-    } else if (numberOfShards == 1) {
-      return "1 Shard";
+    } else if (numberOfShards === 1) {
+      return '1 Shard';
     } else {
-      return "Unknown";
+      return 'Unknown';
     }
   }
 
-  _getShardBalancerStateClass() {
-    return this.props.balancerEnabled ? "cluster-balancer-enabled" : "cluster-balancer-disabled";
+  getShardBalancerStateClass() {
+    return this.props.balancerEnabled ? 'cluster-balancer-enabled' : 'cluster-balancer-disabled';
   }
 
-  _getShardBalancerRunningClass() {
-    return this.props.balancerRunning ? "cluster-balancer-enabled" : "cluster-balancer-notrunning";
+  getShardBalancerRunningClass() {
+    return this.props.balancerRunning ? 'cluster-balancer-enabled' : 'cluster-balancer-notrunning';
   }
 
   getBalancerTooltip() {
@@ -59,50 +68,51 @@ class ShardOverview extends Component {
         <Tooltip id="balancerRunningTooltip">
           <div className="align-left">
             <strong>Locked By:</strong> {this.props.balancerLockedBy}<br></br>
-            <strong>Locked At:</strong> {this.props.balancerLockedWhen}<br></br>
+            <strong>Locked At:</strong> {this.props.balancerLockedWhen.toISOString()}<br></br>
             <strong>Reason for locking:</strong> {this.props.balancerLockedWhy}<br></br>
             <strong>Latest balancer errors:</strong><br></br>
-            {this._getBalancerErrors()}
+            {this.getBalancerErrors()}
           </div>
         </Tooltip>
       );
-    } else {
-      return (
-        <Tooltip id="balancerRunningTooltip">
-          <div>
-            Balancer not running
-          </div>
-        </Tooltip>
-      )
     }
+    return (
+      <Tooltip id="balancerRunningTooltip">
+        <div>
+          Balancer not running
+        </div>
+      </Tooltip>
+    );
   }
 
-  _getBalancerErrors() {
+  getBalancerErrors() {
     if (this.props.balancerErrors) {
       return this.props.balancerErrors.map(function(balancerError) {
         return (
           <div key={balancerError.time}>
-          {balancerError.time + " " + balancerError.details.errmsg}
+            {balancerError.time + ' ' + balancerError.details.errmsg}
           </div>
         );
-      })
+      });
     }
-  };
+  }
+
+  handleRefresh() {
+    this.props.actions.refresh();
+  }
 
   render() {
-    const shardTooltip = {"id": ""};
-    const balancerRunningTooltip = {"id": ""};
     return (
       <div className={classnames(styles.top)}>
         <div className="row">
           <div className="col-md-8">
             <span>
-              <button onClick={this._handleRefresh}>
+              <button onClick={this.handleRefresh}>
                 <i className="fa fa-repeat"> </i>
               </button>
             </span>
-            <span className={classnames(styles['badge-spacing'])}>
-              {this._getNumberOfShards()}
+            <span className={classnames('badge', styles['badge-spacing'])}>
+              {this.getNumberOfShards()}
             </span>
           </div>
           <OverlayTrigger placement="bottom" overlay={this.getBalancerTooltip()}>
@@ -111,12 +121,12 @@ class ShardOverview extends Component {
                 Balancer:
               </span>
               <span className={classnames('badge', styles['badge-spacing'],
-                               styles['to-upper'], styles[this._getShardBalancerStateClass()])}>
-                {this.props.balancerEnabled ? "Enabled": "Disabled"}
+                styles['to-upper'], styles[this.getShardBalancerStateClass()])}>
+                { this.props.balancerEnabled ? 'Enabled' : 'Disabled' }
               </span>
-              <span className={classnames('badge',styles['badge-spacing'],
-                               styles['to-upper'], styles[this._getShardBalancerRunningClass()])}>
-                {this.props.balancerRunning ? "Running" : "Not Running"}
+              <span className={classnames('badge', styles['badge-spacing'],
+                styles['to-upper'], styles[this.getShardBalancerRunningClass()])}>
+                { this.props.balancerRunning ? 'Running' : 'Not Running' }
               </span>
             </div>
           </OverlayTrigger>
@@ -131,12 +141,12 @@ class ShardOverview extends Component {
         <div className="row">
           <div className="col-md-12">
             <ul className={classnames(styles['list-group-horizontal'])}>
-              {this._getShardCharts()}
+              { this.getShardCharts() }
             </ul>
           </div>
         </div>
       </div>
-    )
+    );
   }
 }
 
