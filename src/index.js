@@ -1,13 +1,7 @@
 import ClusterHealthPlugin from './plugin';
-
 import {ClusterHealthStore} from 'stores';
-// import { QueryHistoryStore, RecentListStore, FavoriteListStore } from 'stores';
-// import { RecentQuery, FavoriteQuery, RecentQueryCollection, FavoriteQueryCollection } from 'models';
-
-// import QueryHistoryActions from 'actions';
 
 /**
- * Activate all the components in the Query History package.
  * @param {Object} appRegistry - The Hadron appRegisrty to activate this plugin with.
  **/
 
@@ -26,7 +20,7 @@ function activate(appRegistry) {
 }
 
 /**
- * Deactivate all the components in the Query History package.
+ * Deactivate all the components in the Cluster Health package.
  * @param {Object} appRegistry - The Hadron appRegisrty to deactivate this plugin with.
  **/
 function deactivate(appRegistry) {

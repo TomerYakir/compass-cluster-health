@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import app from 'hadron-app';
 import AppRegistry from 'hadron-app-registry';
 import { AppContainer } from 'react-hot-loader';
-import QueryHistoryPlugin, { activate } from 'plugin';
+import ClusterHealthPlugin, { activate } from 'plugin';
 
 // Import global less file. Note: these styles WILL NOT be used in compass, as compass provides its own set
 // of global styles. If you are wishing to style a given component, you should be writing a less file per
@@ -35,7 +35,7 @@ const render = Component => {
 };
 
 // Render our plugin
-render( QueryHistoryPlugin );
+render( ClusterHealthPlugin );
 
 if (module.hot) {
   /**
@@ -55,6 +55,6 @@ if (module.hot) {
   module.hot.accept('plugin', () => {
     // Because Webpack 2 has built-in support for ES2015 modules,
     // you won't need to re-require your app root in module.hot.accept
-    render( QueryHistoryPlugin );
+    render( ClusterHealthPlugin );
   });
 }

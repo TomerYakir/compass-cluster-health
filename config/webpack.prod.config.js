@@ -30,7 +30,7 @@ module.exports = {
     publicPath: './',
     filename: '[name].js',
     // Export our plugin as a UMD library (compatible with all module definitions - CommonJS, AMD and global variable)
-    library: 'QueryHistoryPlugin',
+    library: 'ClusterHealthPlugin',
     libraryTarget: 'umd'
   },
   resolve: {

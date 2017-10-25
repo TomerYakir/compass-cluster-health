@@ -5,7 +5,7 @@ import ClusterHealthStore from 'stores/cluster-health-store';
 import 'bootstrap/dist/css/bootstrap.css';
 import Actions from 'actions';
 
-class Plugin extends Component {
+class ClusterHealthPlugin extends Component {
   static displayName = 'ClusterHealthPlugin';
 
   /**
@@ -22,5 +22,5 @@ class Plugin extends Component {
   }
 }
 
-export default Plugin;
+export default ClusterHealthPlugin;
 export { Plugin };

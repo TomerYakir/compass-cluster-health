@@ -45,7 +45,7 @@ module.exports = {
             options: {
               modules: true,
               importLoaders: 1,
-              localIdentName: 'QueryHistory_[name]-[local]__[hash:base64:5]'
+              localIdentName: 'ClusterHealth_[name]-[local]__[hash:base64:5]'
             }
           },
           {
