@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 class CollectionChunkDistribution extends Component {
   static propTypes = {
     numberOfShards: PropTypes.number,
-    chunkDistribution: PropTypes.object
+    chunkDistribution: PropTypes.array
   };
 
   constructor(props) {

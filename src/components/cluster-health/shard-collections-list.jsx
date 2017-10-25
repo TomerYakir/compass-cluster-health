@@ -23,9 +23,8 @@ class ShardCollectionsList extends Component {
       return `${numberOfShardedCollections} Sharded Collections`;
     } else if (numberOfShardedCollections === 1) {
       return '1 Sharded Collection';
-    } else {
-      return 'Unknown';
     }
+    return 'Unknown';
   }
 
   getChunksInfo(collection) {
@@ -84,12 +83,13 @@ class ShardCollectionsList extends Component {
         return (
           <li
             key={collection.name}
-            className={classnames('list-group-item', styles.collection)}
+            className={classnames('list-group-item', styles.collection, styles['no-left-padding'])}
             >
-            <div className="col-md-12">
-              <div className="col-md-3">
+              <div className="col-md-5">
                 <span>
-                  {collection.name}
+                  <strong>
+                    {collection.name}
+                  </strong>
                 </span>
                 <OverlayTrigger placement="right" overlay={this.getCollectionTooltip(collection)}>
                   <span><i className="fa fa-info help-icon"> </i></span>
@@ -98,14 +98,12 @@ class ShardCollectionsList extends Component {
                   Shard Key: <code>{collection.shardKey}</code>
                 </div>
               </div>
-              <div className="col-md-8">
+              <div className="col-md-7">
                 <CollectionChunkDistribution
                   chunkDistribution={collection.chunkDistribution}
                   numberOfShards={this.props.numberOfShards}
                   />
               </div>
-            </div>
-
           </li>
         );
       }, this)
@@ -114,7 +112,7 @@ class ShardCollectionsList extends Component {
 
   render() {
     return (
-      <div className="container-fluid">
+      <div className={classnames('container-fluid', styles['margin-top'])}>
         <div className="row">
           <span className="badge">
             { this.getShardedCollectionsNumber() }

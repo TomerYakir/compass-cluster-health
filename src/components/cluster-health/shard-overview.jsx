@@ -49,9 +49,8 @@ class ShardOverview extends Component {
       return `${numberOfShards} Shards`;
     } else if (numberOfShards === 1) {
       return '1 Shard';
-    } else {
-      return 'Unknown';
     }
+    return 'Unknown';
   }
 
   getShardBalancerStateClass() {
@@ -63,7 +62,7 @@ class ShardOverview extends Component {
   }
 
   getBalancerTooltip() {
-    if (this.props.balancerLockedWhen) {
+    if (this.props.balancerLockedBy) {
       return (
         <Tooltip id="balancerRunningTooltip">
           <div className="align-left">
@@ -97,6 +96,14 @@ class ShardOverview extends Component {
     }
   }
 
+  getShardBalancerWarningIcon() {
+    if (this.props.balancerErrors) {
+      return (
+        <i className={classnames('fa', 'fa-warning', styles['warning-icon'])} ></i>
+      );
+    }
+  }
+
   handleRefresh() {
     this.props.actions.refresh();
   }
@@ -105,7 +112,7 @@ class ShardOverview extends Component {
     return (
       <div className={classnames(styles.top)}>
         <div className="row">
-          <div className="col-md-8">
+          <div className="col-md-7">
             <span>
               <button onClick={this.handleRefresh}>
                 <i className="fa fa-repeat"> </i>
@@ -116,17 +123,20 @@ class ShardOverview extends Component {
             </span>
           </div>
           <OverlayTrigger placement="bottom" overlay={this.getBalancerTooltip()}>
-            <div className="col-md-4">
+            <div className="col-md-5">
               <span>
-                Balancer:
+                BALANCER:
               </span>
-              <span className={classnames('badge', styles['badge-spacing'],
+              <span className={classnames('badge', styles['square-badge'], styles['badge-spacing'],
                 styles['to-upper'], styles[this.getShardBalancerStateClass()])}>
                 { this.props.balancerEnabled ? 'Enabled' : 'Disabled' }
               </span>
-              <span className={classnames('badge', styles['badge-spacing'],
+              <span className={classnames('badge', styles['square-badge'], styles['badge-spacing'],
                 styles['to-upper'], styles[this.getShardBalancerRunningClass()])}>
                 { this.props.balancerRunning ? 'Running' : 'Not Running' }
+              </span>
+              <span>
+                { this.getShardBalancerWarningIcon() }
               </span>
             </div>
           </OverlayTrigger>
@@ -139,11 +149,9 @@ class ShardOverview extends Component {
           </div>
         </div>
         <div className="row">
-          <div className="col-md-12">
-            <ul className={classnames(styles['list-group-horizontal'])}>
-              { this.getShardCharts() }
-            </ul>
-          </div>
+          <ul className={classnames(styles['list-group-horizontal'])}>
+            { this.getShardCharts() }
+          </ul>
         </div>
       </div>
     );

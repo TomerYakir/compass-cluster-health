@@ -1,7 +1,7 @@
 const webpack = require('webpack');
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const MinifyPlugin = require('babel-minify-webpack-plugin');
+// const MinifyPlugin = require('babel-minify-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const PeerDepsExternalsPlugin = require('peer-deps-externals-webpack-plugin');
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
@@ -154,9 +154,11 @@ module.exports = {
     // Creates HTML page for us at build time
     new HtmlWebpackPlugin(),
 
+    // Ignore vertx
+    new webpack.IgnorePlugin(/vertx/)
     // An ES6+ aware minifier, results in smaller output compared to UglifyJS given that
     // Chromium in electron supports the majority of ES6 features out of the box.
-    new MinifyPlugin() // this significantly slows down the prod build!
+    // new MinifyPlugin() // this significantly slows down the prod build!
 
     // Analyze the bundle size
     // new BundleAnalyzerPlugin()
