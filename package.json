@@ -18,10 +18,6 @@
     "type": "git",
     "url": "tbd"
   },
-  "dependency-check": {
-    "entries": ["src/index.js"],
-    "ignore": ["mongodb-js-precommit", "mocha"]
-  },
   "scripts": {
     "clean": "rimraf lib",
     "precompile": "npm run clean",
@@ -35,7 +31,7 @@
     "cover": "nyc npm run test",
     "ci": "npm run check && npm run cover && npm run test:karma",
     "fmt": "mongodb-js-fmt ./*.js ./test/*.js",
-    "check": "mongodb-js-precommit './src/**/*{.js,.jsx}' './test/**/*.js' './electron/**/*.js' './config/**/*{.js,.jsx}' --debug",
+    "check": "mongodb-js-precommit './src/**/*{.js,.jsx}' './test/**/*.js' './electron/**/*.js' './config/**/*{.js,.jsx}'",
     "link-plugin": "./scripts/link.sh",
     "unlink-plugin": "./scripts/unlink.sh",
     "prepublish": "npm run compile",
