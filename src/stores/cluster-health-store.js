@@ -4,6 +4,7 @@ import StateMixin from 'reflux-state-mixin';
 import Connection from 'mongodb-connection-model';
 import DataService from 'mongodb-data-service';
 import assert from 'assert';
+import { deactivate } from '../index';
 
 const ClusterHealthStore = Reflux.createStore({
   mixins: [StateMixin.store],
@@ -11,8 +12,9 @@ const ClusterHealthStore = Reflux.createStore({
   listenables: Actions,
   dataService: null,
   data: {},
+  appRegistry: null,
   mockup: false,
-  compass: false,
+  compass: true,
   databases: [],
   INIT_STATE: {
     numberOfShards: 0,
@@ -34,6 +36,7 @@ const ClusterHealthStore = Reflux.createStore({
 
   onActivated(appRegistry) {
     appRegistry.on('data-service-connected', this.onConnected.bind(this));
+    this.appRegistry = appRegistry;
   },
 
   getInitialState() {
@@ -65,7 +68,7 @@ const ClusterHealthStore = Reflux.createStore({
   },
 
   deregisterFromCompass() {
-    // TODO
+    deactivate(this.appRegistry);
   },
 
   returnPromise(func, arg) {
@@ -105,7 +108,7 @@ const ClusterHealthStore = Reflux.createStore({
     const filter = {_id: 'balancer', state: 2};
     this.dataService.find('config.locks', filter, findOptions, (error, documents) => {
       if (error) {
-        console.error("getBalancerRunningByLocks:error - " + error);
+        console.error('getBalancerRunningByLocks:error - ' + error);
       } else {
         this.data.balancerRunning = documents.length > 0;
         if (documents.length > 0) {
@@ -121,7 +124,7 @@ const ClusterHealthStore = Reflux.createStore({
   getBalancerRunningByAdminCmd(arg, resolve) {
     this.dataService.command('admin', {balancerStatus: 1}, (error, results) => {
       if (error) {
-        console.log("cannot run balancerStatus admin command - " + error);
+        console.log('cannot run balancerStatus admin command - ' + error);
       } else {
         this.data.balancerRunning = !(results && !results.inBalancerRound);
       }

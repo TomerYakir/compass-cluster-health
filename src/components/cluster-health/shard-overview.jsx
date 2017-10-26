@@ -75,11 +75,13 @@ class ShardOverview extends Component {
         </Tooltip>
       );
     } else if (this.props.balancerErrors > 0) {
-      <Tooltip id="balancerRunningTooltip">
-        <div className="align-left">
-          {this.getBalancerErrors()}
-        </div>
-      </Tooltip>
+      return (
+        <Tooltip id="balancerRunningTooltip">
+          <div className="align-left">
+            {this.getBalancerErrors()}
+          </div>
+        </Tooltip>
+      );
     }
     return (
       <Tooltip id="balancerRunningTooltip">
