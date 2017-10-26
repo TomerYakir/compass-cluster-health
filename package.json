@@ -1,9 +1,9 @@
 {
   "name": "@mongodb-js/compass-cluster-health",
   "productName": "Cluster Health",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Sharded cluster balancing health.",
-  "main": "src/index.js",
+  "main": "lib/index.js",
   "homepage": "https://compass.mongodb.com",
   "license": "Apache-2.0",
   "author": {

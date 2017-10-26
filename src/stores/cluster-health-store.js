@@ -11,7 +11,7 @@ const ClusterHealthStore = Reflux.createStore({
   listenables: Actions,
   dataService: null,
   data: {},
-  mockup: true,
+  mockup: false,
   compass: false,
   databases: [],
   INIT_STATE: {
@@ -30,6 +30,10 @@ const ClusterHealthStore = Reflux.createStore({
 
   refresh() {
     this.loadData();
+  },
+
+  onActivated(appRegistry) {
+    appRegistry.on('data-service-connected', this.onConnected.bind(this));
   },
 
   getInitialState() {
@@ -68,7 +72,7 @@ const ClusterHealthStore = Reflux.createStore({
     return new Promise(func.bind(this, arg));
   },
 
-  getBalancerEnabled(arg, resolve, reject) {
+  getBalancerEnabled(arg, resolve) {
     const sort = [[ '_id', 1 ]];
     const filter = {_id: 'balancer'};
     const findOptions = {
@@ -81,15 +85,15 @@ const ClusterHealthStore = Reflux.createStore({
 
     this.dataService.find('config.settings', filter, findOptions, (error, documents) => {
       if (error) {
-        reject(true);
+        console.error('getBalancerEnabled:error - ' + error);
       } else {
         this.data.balancerEnabled = (documents.length === 0 || (documents.length && !documents[0].stopped));
-        resolve(true);
       }
+      resolve(true);
     });
   },
 
-  getBalancerRunningByLocks(arg, resolve, reject) {
+  getBalancerRunningByLocks(arg, resolve) {
     const sort = [[ '_id', 1 ]];
     const findOptions = {
       sort: sort,
@@ -101,24 +105,26 @@ const ClusterHealthStore = Reflux.createStore({
     const filter = {_id: 'balancer', state: 2};
     this.dataService.find('config.locks', filter, findOptions, (error, documents) => {
       if (error) {
-        reject(true);
-      }
-      this.data.balancerRunning = documents.length > 0;
-      if (documents.length > 0) {
-        this.data.balancerLockedBy = documents[0].who;
-        this.data.balancerLockedWhen = documents[0].when;
-        this.data.balancerLockedWhy = documents[0].why;
+        console.error("getBalancerRunningByLocks:error - " + error);
+      } else {
+        this.data.balancerRunning = documents.length > 0;
+        if (documents.length > 0) {
+          this.data.balancerLockedBy = documents[0].who;
+          this.data.balancerLockedWhen = documents[0].when;
+          this.data.balancerLockedWhy = documents[0].why;
+        }
       }
       resolve(true);
     });
   },
 
-  getBalancerRunningByAdminCmd(arg, resolve, reject) {
+  getBalancerRunningByAdminCmd(arg, resolve) {
     this.dataService.command('admin', {balancerStatus: 1}, (error, results) => {
       if (error) {
-        reject(true);
+        console.log("cannot run balancerStatus admin command - " + error);
+      } else {
+        this.data.balancerRunning = !(results && !results.inBalancerRound);
       }
-      this.data.balancerRunning = !(results && !results.inBalancerRound);
       resolve(true);
     });
   },
@@ -133,7 +139,7 @@ const ClusterHealthStore = Reflux.createStore({
     });
   },
 
-  getShardNamesHosts(arg, resolve, reject) {
+  getShardNamesHosts(arg, resolve) {
     const collection = 'config.shards';
     const filter = {};
     const sort = [[ '_id', 1 ]];
@@ -148,44 +154,46 @@ const ClusterHealthStore = Reflux.createStore({
     };
     this.dataService.find(collection, filter, findOptions, (error, documents) => {
       if (error) {
-        reject(true);
-      }
-      this.data.shards = {};
-      for (const shard in documents) {
-        if (documents.hasOwnProperty(shard)) {
-          const shardObj = documents[shard];
-          this.data.shards[shardObj._id] = {
-            hosts: shardObj.host,
-            size: 0,
-            databaseSizes: []
-          };
+        console.error('getShardNamesHosts:error - ' + error);
+      } else {
+        this.data.shards = {};
+        for (const shard in documents) {
+          if (documents.hasOwnProperty(shard)) {
+            const shardObj = documents[shard];
+            this.data.shards[shardObj._id] = {
+              hosts: shardObj.host,
+              size: 0,
+              databaseSizes: []
+            };
+          }
         }
+        this.data.totalSize = 0;
       }
-      this.data.totalSize = 0;
       resolve(true);
     });
   },
 
-  getShardDatabaseSize(arg, resolve, reject) {
+  getShardDatabaseSize(arg, resolve) {
     const gbScale = 1024 * 1024 * 1024;
     this.dataService.command(arg, {dbStats: 1, scale: gbScale}, (error, results) => {
       if (error) {
-        reject(true);
-      }
-      for (let shard in results.raw) {
-        if (results.raw.hasOwnProperty(shard)) {
-          const shardObj = results.raw[shard];
-          if (shard.indexOf('/') > 0) {
-            shard = shard.split('/')[0];
+        console.error('getShardDatabaseSize:error - ' + error);
+      } else {
+        for (let shard in results.raw) {
+          if (results.raw.hasOwnProperty(shard)) {
+            const shardObj = results.raw[shard];
+            if (shard.indexOf('/') > 0) {
+              shard = shard.split('/')[0];
+            }
+            this.data.shards[shard].databaseSizes.push(shardObj.dataSize + shardObj.indexSize);
           }
-          this.data.shards[shard].databaseSizes.push(shardObj.dataSize + shardObj.indexSize);
         }
       }
       resolve(true);
     });
   },
 
-  getShardSizes(arg, resolve, reject) {
+  getShardSizes(arg, resolve) {
     const collection = 'config.databases';
     const filter = {};
     const limit = 0;
@@ -197,17 +205,18 @@ const ClusterHealthStore = Reflux.createStore({
     };
     this.dataService.find(collection, filter, findOptions, (error, documents) => {
       if (error) {
-        reject(true);
-      }
-      const shardSizePromises = [];
-      for (const doc in documents) {
-        if (documents.hasOwnProperty(doc)) {
-          shardSizePromises.push(this.returnPromise(this.getShardDatabaseSize, documents[doc]._id));
+        console.error('getShardSizes:error - ' + error);
+      } else {
+        const shardSizePromises = [];
+        for (const doc in documents) {
+          if (documents.hasOwnProperty(doc)) {
+            shardSizePromises.push(this.returnPromise(this.getShardDatabaseSize, documents[doc]._id));
+          }
         }
+        Promise.all(shardSizePromises).then(() => {
+          resolve(true);
+        });
       }
-      Promise.all(shardSizePromises).then(() => {
-        resolve(true);
-      });
     });
   },
 
@@ -231,32 +240,33 @@ const ClusterHealthStore = Reflux.createStore({
     );
   },
 
-  getCollectionDistributionStats(arg, resolve, reject) {
+  getCollectionDistributionStats(arg, resolve) {
     this.dataService.shardedCollectionDetail(arg.name, (error, result) => {
       if (error) {
-        reject(true);
-      }
-      const shardDistribution = [];
-      for (const shard in result.shards) {
-        if (result.shards.hasOwnProperty(shard)) {
-          const shardObj = result.shards[shard];
-          shardDistribution.push({
-            shard: shard,
-            chunks: shardObj.estimatedDataPercent,
-            avgObjSize: shardObj.avgObjSize,
-            count: shardObj.count,
-            estimatedDataPerChunk: shardObj.estimatedDataPerChunk.toFixed(2),
-            estimatedDocPercent: shardObj.estimatedDocPercent,
-            estimatedDocsPerChunk: shardObj.estimatedDocsPerChunk
-          });
+        console.error('getCollectionDistributionStats:error - ' + error);
+      } else {
+        const shardDistribution = [];
+        for (const shard in result.shards) {
+          if (result.shards.hasOwnProperty(shard)) {
+            const shardObj = result.shards[shard];
+            shardDistribution.push({
+              shard: shard,
+              chunks: shardObj.estimatedDataPercent,
+              avgObjSize: shardObj.avgObjSize,
+              count: shardObj.count,
+              estimatedDataPerChunk: shardObj.estimatedDataPerChunk.toFixed(2),
+              estimatedDocPercent: shardObj.estimatedDocPercent,
+              estimatedDocsPerChunk: shardObj.estimatedDocsPerChunk
+            });
+          }
         }
+        this.data.collections[result._id].chunkDistribution = shardDistribution;
       }
-      this.data.collections[result._id].chunkDistribution = shardDistribution;
       resolve(true);
     });
   },
 
-  getCollectionStats(arg, resolve, reject) {
+  getCollectionStats(arg, resolve) {
     const collection = 'config.collections';
     const filter = {};
     const sort = [[ '_id', 1 ]];
@@ -270,24 +280,26 @@ const ClusterHealthStore = Reflux.createStore({
     };
     this.dataService.find(collection, filter, findOptions, (error, documents) => {
       if (error) {
-        reject(true);
-      }
-      this.data.numberOfShardedCollections = documents.length;
-      this.data.collections = {};
-      const collDistPromises = [];
-      for (let idx = 0; idx < documents.length; idx++) {
-        const doc = documents[idx];
-        const collObj = {
-          'name': collection._id,
-          'shardKey': JSON.stringify(doc.key),
-          'chunkDistribution': []
-        };
-        this.data.collections[collObj.name] = collObj;
-        collDistPromises.push(this.returnPromise(this.getCollectionDistributionStats, collObj));
-      }
-      Promise.all(collDistPromises).then(() => {
+        console.error('getCollectionStats:error - ' + error);
         resolve(true);
-      });
+      } else {
+        this.data.numberOfShardedCollections = documents.length;
+        this.data.collections = {};
+        const collDistPromises = [];
+        for (let idx = 0; idx < documents.length; idx++) {
+          const doc = documents[idx];
+          const collObj = {
+            'name': doc._id,
+            'shardKey': JSON.stringify(doc.key),
+            'chunkDistribution': []
+          };
+          this.data.collections[collObj.name] = collObj;
+          collDistPromises.push(this.returnPromise(this.getCollectionDistributionStats, collObj));
+        }
+        Promise.all(collDistPromises).then(() => {
+          resolve(true);
+        });
+      }
     });
   },
 

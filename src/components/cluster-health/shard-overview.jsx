@@ -74,18 +74,24 @@ class ShardOverview extends Component {
           </div>
         </Tooltip>
       );
+    } else if (this.props.balancerErrors > 0) {
+      <Tooltip id="balancerRunningTooltip">
+        <div className="align-left">
+          {this.getBalancerErrors()}
+        </div>
+      </Tooltip>
     }
     return (
       <Tooltip id="balancerRunningTooltip">
         <div>
-          Balancer not running
+          Balancer not running and no errors detected
         </div>
       </Tooltip>
     );
   }
 
   getBalancerErrors() {
-    if (this.props.balancerErrors) {
+    if (this.props.balancerErrors > 0) {
       return this.props.balancerErrors.map(function(balancerError) {
         return (
           <div key={balancerError.time}>
@@ -97,7 +103,7 @@ class ShardOverview extends Component {
   }
 
   getShardBalancerWarningIcon() {
-    if (this.props.balancerErrors) {
+    if (this.props.balancerErrors.length > 0) {
       return (
         <i className={classnames('fa', 'fa-warning', styles['warning-icon'])} ></i>
       );
