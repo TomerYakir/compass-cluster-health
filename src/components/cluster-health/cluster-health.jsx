@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import ShardOverview from './shard-overview';
 import ShardCollectionsList from './shard-collections-list';
+import ClusterChunkMigrationRate from './chunk-migration-rate';
+
 
 class ClusterHealth extends Component {
 
@@ -13,6 +15,7 @@ class ClusterHealth extends Component {
       <div className="container">
         <ShardOverview {...this.props} />
         <ShardCollectionsList {...this.props} />
+        <ClusterChunkMigrationRate {...this.props} />
       </div>
     );
   }

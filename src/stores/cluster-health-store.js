@@ -13,7 +13,7 @@ const ClusterHealthStore = Reflux.createStore({
   dataService: null,
   data: {},
   appRegistry: null,
-  mockup: false,
+  mockup: true,
   compass: false,
   databases: [],
   INIT_STATE: {
@@ -439,6 +439,18 @@ const ClusterHealthStore = Reflux.createStore({
             }
           ]
         }
+      },
+      chunkMigrationRate: {
+        avgRate: 3,
+        zoom: 'Hour',
+        selectedStack: 'Source',
+        rateOverTime: [
+          {time: new Date("October 13, 2014 11:13:00"),rate: 4.1},
+          {time: new Date("October 13, 2014 12:18:00"),rate: 7},
+          {time: new Date("October 13, 2014 13:25:00"),rate: 5.5},
+          {time: new Date("October 13, 2014 14:45:00"),rate: 9},
+          {time: new Date("October 13, 2014 15:13:00"),rate: 2.8}
+        ]
       }
     };
   }
