@@ -14,7 +14,7 @@ const ClusterHealthStore = Reflux.createStore({
   data: {},
   appRegistry: null,
   mockup: false,
-  compass: true,
+  compass: false,
   databases: [],
   INIT_STATE: {
     numberOfShards: 0,
