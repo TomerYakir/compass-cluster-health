@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { DropdownButton, MenuItem } from 'react-bootstrap';
+import ChunkMigrationChart from './chunk-migration-chart';
 
 class ClusterChunkMigrationRate extends Component {
 
@@ -14,23 +16,29 @@ class ClusterChunkMigrationRate extends Component {
         <p>Change the stack view for context.</p>
         <div className="row">
           <div className="col-md-3"></div>
-          <div className="col-md-3">span 2</div>
           <div className="col-md-3">
-            <div className="dropdown">
-    <button className="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">Tutorials
-    <span className="caret"></span></button>
-    <ul className="dropdown-menu" role="menu" aria-labelledby="menu1">
-      <li role="presentation"><a role="menuitem" tabIndex="-1" href="#">HTML</a></li>
-      <li role="presentation"><a role="menuitem" tabIndex="-1" href="#">CSS</a></li>
-      <li role="presentation"><a role="menuitem" tabIndex="-1" href="#">JavaScript</a></li>
-      <li role="presentation"><a role="menuitem" tabIndex="-1" href="#">About Us</a></li>
-    </ul>
-  </div>
+            <DropdownButton title="time selection" id="dropdown-basic">
+              <MenuItem eventKey="1">10 Minutes</MenuItem>
+              <MenuItem eventKey="2">1 Hour</MenuItem>
+              <MenuItem eventKey="3" active>1 Day</MenuItem>
+            </DropdownButton>
+          </div>
+          <div className="col-md-3">
+            <DropdownButton title="Stack options" id="dropdown-basic">
+              <MenuItem eventKey="1" active>No stacking</MenuItem>
+              <MenuItem eventKey="2">Source Shard</MenuItem>
+              <MenuItem eventKey="3" >Destination Shard</MenuItem>
+              <MenuItem eventKey="4" >Shard Pairs</MenuItem>
+            </DropdownButton>
           </div>
           <div className="col-md-3"><span className="label label-default">{this.props.chunkMigrationRate.avgRate} GB/h</span></div>
         </div>
         <div className="row">
-          <div className="col-md-12">represting the chart area</div>
+          <div className="col-md-12">
+            <ChunkMigrationChart
+              chunkMigrationRate={this.props.chunkMigrationRate.rateOverTime}
+              />
+          </div>
         </div>
       </div>
     );
