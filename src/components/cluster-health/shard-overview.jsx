@@ -36,7 +36,9 @@ class ShardOverview extends Component {
             size={shardObj.size}
             numberOfShards={this.props.numberOfShards}
             hosts={shardObj.hosts}
-            totalSize={this.props.totalSize} />
+            totalSize={this.props.totalSize}
+            isMemberDown={shardObj.isMemberDown}
+            hasPrimary={shardObj.hasPrimary}  />
         );
       }, this);
     }
@@ -60,6 +62,26 @@ class ShardOverview extends Component {
   getShardBalancerRunningClass() {
     return this.props.balancerRunning ? 'cluster-balancer-enabled' : 'cluster-balancer-notrunning';
   }
+
+  getSizeTooltip() {
+    if (this.props.totalSize) {
+      return (
+        <Tooltip id="sizeTooltip">
+          <div className="align-center">
+            <strong>Cluster Size:</strong> {this.props.totalSize} GB
+          </div>
+        </Tooltip>
+      );
+    }
+    return (
+      <Tooltip id="balancerRunningTooltip">
+        <div>
+          Cluster Size: Unknown
+        </div>
+      </Tooltip>
+    );
+  }
+
 
   getBalancerTooltip() {
     if (this.props.balancerLockedBy) {
@@ -126,9 +148,12 @@ class ShardOverview extends Component {
                 <i className="fa fa-repeat"> </i>
               </button>
             </span>
-            <span className={classnames('badge', styles['badge-spacing'])}>
-              {this.getNumberOfShards()}
-            </span>
+            <OverlayTrigger placement="bottom" overlay={this.getSizeTooltip()}>
+              <span className={classnames('badge', styles['badge-spacing'])}>
+                {this.getNumberOfShards()}
+              </span>
+            </OverlayTrigger>
+
           </div>
           <OverlayTrigger placement="bottom" overlay={this.getBalancerTooltip()}>
             <div className="col-md-5">
@@ -151,6 +176,7 @@ class ShardOverview extends Component {
         </div>
         <div className="row">
           <div className="col-md-12">
+            <strong>Cluster Total Size:</strong> {this.props.totalSize} GB <br/>
             <small>
               Hover over the shard charts/balancer status for more details.
             </small>

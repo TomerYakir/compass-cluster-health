@@ -1,5 +1,5 @@
 {
-  "name": "@mongodb-js/compass-cluster-health",
+  "name": "compass-cluster-health",
   "productName": "Cluster Health",
   "version": "0.2.1",
   "description": "Sharded cluster balancing health.",
@@ -38,7 +38,7 @@
     "storybook": "start-storybook -p 9001 -c .storybook"
   },
   "precommit": [
-    
+
   ],
   "dependencies": {
     "bootstrap": "https://github.com/twbs/bootstrap/archive/v3.3.5.tar.gz",
@@ -48,9 +48,9 @@
     "mongodb-connection-model": "^10.4.2",
     "mongodb-data-service": "^8.2.0",
     "node-loader": "^0.6.0",
-    "react": "^16.0.0",
+    "react": "^15.5.4",
     "react-bootstrap": "^0.31.3",
-    "react-dom": "^16.0.0",
+    "react-dom": "^15.5.4",
     "react-fontawesome": "^1.6.1",
     "react-vega": "^3.1.1",
     "react-vega-lite": "^1.1.2",

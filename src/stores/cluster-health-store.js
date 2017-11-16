@@ -196,6 +196,36 @@ const ClusterHealthStore = Reflux.createStore({
     });
   },
 
+  getShardsHealth(arg, resolve){
+          this.dataService.command("admin",{connPoolStats : 1},(error, results) => {
+            for (var stats in results)
+            {
+                 var shardsData = results["replicaSets"];
+                 for (var shard in shardsData) {
+                   if (Object.keys(this.data.shards).indexOf(shard) > -1 )
+                   {
+                     var isPrimary = false;
+                     for (var shardStat in shardsData[shard]["hosts"])
+                     {
+                        if (shardsData[shard]["hosts"][shardStat]["ok"] == false)
+                        {
+                          this.data.shards[shard]["isMemberDown"] = true;
+                        }
+                        else {
+                          if (!isPrimary)
+                          {
+                            isPrimary = shardsData[shard]["hosts"][shardStat]["ismaster"];
+                          }
+                        }
+                     }
+                     this.data.shards[shard]["hasPrimary"] = isPrimary;
+                 }
+               }
+
+            }
+           resolve(true);
+          });
+  },
   getShardSizes(arg, resolve) {
     const collection = 'config.databases';
     const filter = {};
@@ -226,7 +256,10 @@ const ClusterHealthStore = Reflux.createStore({
   loadShardOverviewStats(arg, resolve) {
     this.returnPromise(this.getShardNamesHosts).then(
       () => {
-        this.returnPromise(this.getShardSizes).then(() => {
+        Promise.all([
+          this.returnPromise(this.getShardsHealth),
+          this.returnPromise(this.getShardSizes)
+        ]).then(() => {
           let totalSize = 0;
           for (const shard in this.data.shards) {
             if (this.data.shards.hasOwnProperty(shard)) {
@@ -354,15 +387,21 @@ const ClusterHealthStore = Reflux.createStore({
       shards: {
         'Shard_0': {
           'size': 4.5,
-          'hosts': 'MDBS0_N1, MDBS0_N2, MDBS0_N3'
+          'hosts': 'MDBS0_N1, MDBS0_N2, MDBS0_N3',
+          'isMemberDown' : false,
+          'hasPrimary' : false
         },
         'Shard_1': {
           'size': 5.5,
-          'hosts': 'MDBS1_N1, MDBS1_N2, MDBS1_N3'
+          'hosts': 'MDBS1_N1, MDBS1_N2, MDBS1_N3',
+          'isMemberDown' : true,
+          'hasPrimary' : true
         },
         'Shard_2': {
           'size': 2.5,
-          'hosts': 'MDBS2_N1, MDBS2_N2, MDBS2_N3'
+          'hosts': 'MDBS2_N1, MDBS2_N2, MDBS2_N3',
+          'isMemberDown' : false,
+          'hasPrimary' : false
         }
       },
       numberOfShardedCollections: 2,

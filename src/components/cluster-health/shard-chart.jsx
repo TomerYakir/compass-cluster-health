@@ -11,7 +11,9 @@ class ShardChart extends PureComponent {
     hosts: PropTypes.string,
     totalSize: PropTypes.number,
     size: PropTypes.number,
-    name: PropTypes.string
+    name: PropTypes.string,
+    isMemberDown: PropTypes.boolean,
+    hasPrimary: PropTypes.boolean
   };
 
   constructor(props) {
@@ -78,6 +80,66 @@ class ShardChart extends PureComponent {
     };
   }
 
+  getHealthTooltip(status) {
+      if (status === "warning")
+      {
+        return (
+          <Tooltip id="healthTooltip">
+            <div className="align-center">
+              Warning! A primary is available but one or more secondaries are down.
+            </div>
+          </Tooltip>
+        );
+      }
+      else if (status === "down")
+      {
+        return (
+          <Tooltip id="healthTooltip">
+            <div className="align-center">
+              Alert! A primary is<strong> not </strong>available but one or more secondaries are down.
+            </div>
+          </Tooltip>
+        );
+      }
+      else
+      {
+        return (
+          <Tooltip id="healthTooltip">
+            <div className="align-center">
+              The shard is in healthy state.
+            </div>
+          </Tooltip>
+        );
+      }
+  }
+
+ getShardHealthIcon()
+ {
+   if (!this.props.hasPrimary)
+   {
+     return (
+      <OverlayTrigger placement="bottom" overlay={this.getHealthTooltip("down")}>
+        <div className={classnames(styles['radial-div-down'])}></div>
+       </OverlayTrigger>
+     );
+   }
+   if (this.props.isMemberDown)
+   {
+     return (
+    <OverlayTrigger placement="bottom" overlay={this.getHealthTooltip("warning")}>
+       <div className={classnames(styles['radial-div-warning'])} overlay={this.getHealthTooltip("warning")}></div>
+    </OverlayTrigger>
+  );
+   }
+   else {
+     return (
+    <OverlayTrigger placement="bottom" overlay={this.getHealthTooltip("healthy")}>
+        <div className={classnames(styles['radial-div-healthy'])} ></div>
+    </OverlayTrigger>
+    );
+   }
+ }
+
   render() {
     const distance = this.props.totalSize - this.props.size;
     const data = {
@@ -91,6 +153,7 @@ class ShardChart extends PureComponent {
       <li className={classnames(styles['list-group-item-cstm'], styles['shard-container'])}>
         <div>
           <div className={classnames('col-md-5')}>
+             {this.getShardHealthIcon()}
             <span className={classnames(styles['shard-name'])}>
               {this.props.name}
               <OverlayTrigger placement="bottom" overlay={this.getShardTooltip()}>
