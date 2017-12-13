@@ -7,7 +7,7 @@
 ```
 cd ~/.mongodb/compass/plugins
 git clone git@github.com:tomeryakir/compass-cluster-health.git
-cd cluster-health
+cd compass-cluster-health
 npm install
 
 ```
