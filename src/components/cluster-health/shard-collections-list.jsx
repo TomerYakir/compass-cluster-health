@@ -83,9 +83,9 @@ class ShardCollectionsList extends Component {
         return (
           <li
             key={collection.name}
-            className={classnames('list-group-item', styles.collection, styles['no-left-padding'])}
+            className={classnames('styles.list-group-item', styles.collection, styles['no-left-padding'])}
             >
-              <div className="col-md-5">
+              <div  className={classnames('col-md-5')} style={{marginTop: '2' + 'em'}} >
                 <span>
                   <strong>
                     {collection.name}
@@ -98,7 +98,7 @@ class ShardCollectionsList extends Component {
                   Shard Key: <code>{collection.shardKey}</code>
                 </div>
               </div>
-              <div className="col-md-7">
+              <div className={classnames('col-md-7','styles.shardingKey')} style={{marginTop: '1' + 'em'}}>
                 <CollectionChunkDistribution
                   chunkDistribution={collection.chunkDistribution}
                   numberOfShards={this.props.numberOfShards}
@@ -112,9 +112,9 @@ class ShardCollectionsList extends Component {
 
   render() {
     return (
-      <div className={classnames('container-fluid', styles['margin-top'])}>
+      <div className={classnames('styles.container-fluid',styles['margin-top'])}>
         <div className="row">
-          <span className="badge">
+          <span className={classnames(styles['collection-badge'])}>
             { this.getShardedCollectionsNumber() }
           </span>
         </div>

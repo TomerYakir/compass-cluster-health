@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import ShardOverview from './shard-overview';
 import ShardCollectionsList from './shard-collections-list';
+import styles from './cluster-health.less';
+import classnames from 'classnames';
 
 class ClusterHealth extends Component {
 
@@ -10,7 +12,7 @@ class ClusterHealth extends Component {
 
   render() {
     return (
-      <div className="container">
+      <div className={classnames('container',styles.component)}>
         <ShardOverview {...this.props} />
         <ShardCollectionsList {...this.props} />
       </div>

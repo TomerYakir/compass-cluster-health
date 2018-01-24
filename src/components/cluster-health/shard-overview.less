@@ -2,9 +2,24 @@
   margin-left: 5px;
 }
 
+
 .square-badge {
   border-radius: 0px !important;
 }
+
+.shards-badge{
+    margin-left: 10px;
+    text-transform: uppercase;
+    color: #777474;
+    border-radius: 14px;
+    border-style: solid;
+    border-color: #bfbfbf;
+    border-width: 1px;
+    padding: 0 8px;
+    margin-right: 5px;
+    font-weight: bold;
+}
+
 
 .warning-icon {
   font-size: 14pt;
@@ -52,6 +67,9 @@
 }
 
 .cluster-balancer {
+  &-main {
+    padding-left: 15em;
+  }
   &-enabled {
     background-color: #5c9f3d !important;
   }
@@ -71,16 +89,18 @@
 
 .list-group-horizontal {
   padding-left: 4px;
+  background-color: #FFFFFF;
 }
 
 .list-group-horizontal .list-group-item-cstm {
 	display: inline-block;
 }
 .list-group-horizontal .list-group-item-cstm {
-	margin-bottom: 0;
+	margin-bottom: 3px;
 	margin-left: 10px;
 	margin-right: 0;
- 	border-width: 1px;
+ 	border-width: 0px;
+  border: 1px;
 }
 
 .shard {
@@ -90,6 +110,7 @@
     border-width: 1px;
     border-style: solid;
     margin-top: 5px;
+    background-color: #FFFFFF;
   }
 
   &-information {
@@ -103,11 +124,22 @@
     font-weight: bold;
   }
 
+  &-info {
+    margin-top: 25px;
+  }
+
+  &-chart-info {
+    margin-top: 25px;
+    padding-right: 40px;
+  }
+
   &-size {
     display: block;
+    margin-left: 60px;
   }
 
   &-chart {
     margin-left: 17px;
+    margin-top: 1em;
   }
 }

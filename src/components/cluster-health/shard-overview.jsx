@@ -144,19 +144,19 @@ class ShardOverview extends Component {
         <div className="row">
           <div className="col-md-7">
             <span>
-              <button onClick={this.handleRefresh}>
-                <i className="fa fa-repeat"> </i>
+              <button onClick={this.handleRefresh} className="btn btn-default btn-xs ">
+                <i  className="fa fa-repeat" ></i>
               </button>
             </span>
             <OverlayTrigger placement="bottom" overlay={this.getSizeTooltip()}>
-              <span className={classnames('badge', styles['badge-spacing'])}>
+              <span className={classnames(styles['shards-badge'], styles['badge-spacing'])}>
                 {this.getNumberOfShards()}
               </span>
             </OverlayTrigger>
 
           </div>
           <OverlayTrigger placement="bottom" overlay={this.getBalancerTooltip()}>
-            <div className="col-md-5">
+            <div className={classnames('col-md-5',styles['cluster-balancer-main'])}>
               <span>
                 BALANCER:
               </span>
@@ -174,7 +174,7 @@ class ShardOverview extends Component {
             </div>
           </OverlayTrigger>
         </div>
-        <div className="row">
+        <div className={classnames('row')}>
           <div className="col-md-12">
             <strong>Cluster Total Size:</strong> {this.props.totalSize} GB <br/>
             <small>
@@ -182,8 +182,8 @@ class ShardOverview extends Component {
             </small>
           </div>
         </div>
-        <div className="row">
-          <ul className={classnames(styles['list-group-horizontal'])}>
+        <div className={classnames('row')}>
+          <ul className={classnames(styles['list-group-horizontal'],styles['shard-row'])}>
             { this.getShardCharts() }
           </ul>
         </div>

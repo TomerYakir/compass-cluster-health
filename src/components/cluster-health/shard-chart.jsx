@@ -151,8 +151,8 @@ class ShardChart extends PureComponent {
     const barSpec = this.getBarSpec();
     return (
       <li className={classnames(styles['list-group-item-cstm'], styles['shard-container'])}>
-        <div>
-          <div className={classnames('col-md-5')}>
+        <div >
+          <div className={classnames('col-md-6',styles['shard-info'])}>
              {this.getShardHealthIcon()}
             <span className={classnames(styles['shard-name'])}>
               {this.props.name}
@@ -160,13 +160,14 @@ class ShardChart extends PureComponent {
                 <i className="fa fa-info help-icon" />
               </OverlayTrigger>
             </span>
-            <span className={classnames(styles['shard-size'])}>
-              {this.props.size} GB
-            </span>
+
 
           </div>
-          <div className="col-md-7">
-            <VegaLite className="shard-chart" data={data} spec={barSpec} width={100} height={42} />
+          <div className={classnames('col-md-6')}>
+            <VegaLite className={classnames(styles['shard-chart'],styles['shard-chart-info'])} data={data} spec={barSpec} width={100} height={42} />
+            <span className={classnames(styles['shard-size'])}>
+                {this.props.size} GB
+            </span>
           </div>
         </div>
       </li>
