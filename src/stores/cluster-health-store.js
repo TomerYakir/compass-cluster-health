@@ -83,7 +83,8 @@ const ClusterHealthStore = Reflux.createStore({
       fields: null,
       skip: 0,
       limit: 1,
-      promoteValues: false
+      promoteValues: false,
+      maxTimeMS: 2000
     };
 
     this.dataService.find('config.settings', filter, findOptions, (error, documents) => {
@@ -103,7 +104,8 @@ const ClusterHealthStore = Reflux.createStore({
       fields: null,
       skip: 0,
       limit: 1,
-      promoteValues: false
+      promoteValues: false,
+      maxTimeMS: 2000
     };
     const filter = {_id: 'balancer', state: 2};
     this.dataService.find('config.locks', filter, findOptions, (error, documents) => {
@@ -153,7 +155,8 @@ const ClusterHealthStore = Reflux.createStore({
       sort: sort,
       fields: project,
       limit: limit,
-      promoteValues: false
+      promoteValues: false,
+      maxTimeMS: 2000
     };
     this.dataService.find(collection, filter, findOptions, (error, documents) => {
       if (error) {
@@ -234,7 +237,8 @@ const ClusterHealthStore = Reflux.createStore({
     const findOptions = {
       fields: project,
       limit: limit,
-      promoteValues: false
+      promoteValues: false,
+      maxTimeMS: 2000
     };
     this.dataService.find(collection, filter, findOptions, (error, documents) => {
       if (error) {
@@ -280,6 +284,15 @@ const ClusterHealthStore = Reflux.createStore({
     this.dataService.shardedCollectionDetail(arg.name, (error, result) => {
       if (error) {
         console.error('getCollectionDistributionStats:error - ' + error);
+        shardDistribution.push({
+          shard: "NA",
+          chunks: "NA",
+          avgObjSize: "NA",
+          count: "NA",
+          estimatedDataPerChunk: "NA",
+          estimatedDocPercent: "NA",
+          estimatedDocsPerChunk: "NA"
+        });
       } else {
         const shardDistribution = [];
         for (const shard in result.shards) {
@@ -312,7 +325,8 @@ const ClusterHealthStore = Reflux.createStore({
       sort: sort,
       fields: project,
       limit: limit,
-      promoteValues: false
+      promoteValues: false,
+      maxTimeMS: 2000
     };
     this.dataService.find(collection, filter, findOptions, (error, documents) => {
       if (error) {

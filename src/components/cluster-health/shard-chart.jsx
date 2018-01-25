@@ -164,7 +164,7 @@ class ShardChart extends PureComponent {
 
           </div>
           <div className={classnames('col-md-6')}>
-            <VegaLite className={classnames(styles['shard-chart'],styles['shard-chart-info'])} data={data} spec={barSpec} width={100} height={42} />
+            <VegaLite className={classnames(styles['shard-chart'],styles['shard-chart-info'])}  data={data} spec={barSpec} width={100} height={42} />
             <span className={classnames(styles['shard-size'])}>
                 {this.props.size} GB
             </span>

@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import VegaLite from 'react-vega-lite';
 import PropTypes from 'prop-types';
+import classnames from 'classnames';
+import styles from './shard-collections-list.less';
 
 class CollectionChunkDistribution extends Component {
   static propTypes = {
@@ -10,16 +12,26 @@ class CollectionChunkDistribution extends Component {
 
   constructor(props) {
     super(props);
+    if (props.numberOfShards <= 10) {
+      this.graphCo = 45;
+    }
+    else if (props.numberOfShards <= 20) {
+      this.graphCo = 25;
+    }
+    else {
+      this.graphCo = 10;
+    }
   }
 
   getBarSpec() {
     return {
       mark: 'bar',
-      width: this.props.numberOfShards * 100,
+      width: this.props.numberOfShards * this.graphCo,
       height: 65,
       encoding: {
         x: {field: 'shard',
           type: 'ordinal',
+          scale: {"bandSize": "fit"},
           axis: {
             grid: false,
             title: '',
@@ -27,11 +39,13 @@ class CollectionChunkDistribution extends Component {
             tickSize: 0,
             tickLabelColor: '#a09f9e',
             axisColor: '#EBEBED'
+
           }
         },
         y: {
           field: 'chunks',
           type: 'quantitative',
+          scale: {"bandSize": "fit"},
           axis: {
             grid: false,
             ticks: 2,
@@ -51,8 +65,8 @@ class CollectionChunkDistribution extends Component {
             title: ''
           },
           'tooltip': {
-            'field': 'chunks',
-            'type': 'quantitative'}
+            'field': 'shard',
+            'type': 'ordinal'}
         }
       }
     };
@@ -65,7 +79,7 @@ class CollectionChunkDistribution extends Component {
     };
     return (
       <div>
-        <VegaLite data={data} spec={barSpec} />
+        <VegaLite className={classnames(styles['graph'])}data={data} spec={barSpec}  />
       </div>
     );
   }
