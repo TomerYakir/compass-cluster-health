@@ -1,5 +1,6 @@
-import ClusterHealthStore from './cluster-health-store';
+import ClusterHealthStore from './store';
 
+export default ClusterHealthStore;
 export {
   ClusterHealthStore
 };

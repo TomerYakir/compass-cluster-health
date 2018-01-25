@@ -31,7 +31,7 @@ For more info, please see https://github.com/mongodb-js/precommit
       /Users/tomeryakir/.mongodb/compass/plugins/compass-cluster-health/src/components/cluster-health/shard-overview.jsx
         52:12  error  Unnecessary 'else' after 'return'  no-else-return
       
-      /Users/tomeryakir/.mongodb/compass/plugins/compass-cluster-health/src/stores/cluster-health-store.js
+      /Users/tomeryakir/.mongodb/compass/plugins/compass-cluster-health/src/stores/store.js
          60:7    warning  Unexpected console statement                                                                                no-console
          60:50   error    Missing semicolon                                                                                           semi
          72:16   error    'Promise' is not defined                                                                                    no-undef
