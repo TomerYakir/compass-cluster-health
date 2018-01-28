@@ -274,6 +274,7 @@ const ClusterHealthStore = Reflux.createStore({
           }
           this.data.totalSize = parseFloat(totalSize.toFixed(4));
           this.data.numberOfShards = Object.keys(this.data.shards).length;
+          console.log('loadShardOverviewStats');
           resolve(true);
         });
       }
