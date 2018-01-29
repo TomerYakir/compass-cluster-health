@@ -1,19 +1,23 @@
 import store from 'stores';
-import AppRegistry from 'hadron-app-registry';
-import Connection from 'mongodb-connection-model';
-import DataService from 'mongodb-data-service';
-
-const CONNECTION = new Connection({
-  hostname: '127.0.0.1',
-  port: 27047,
-  ns: 'compass-cluster-health-test'
-});
+// import AppRegistry from 'hadron-app-registry';
+// import Connection from 'mongodb-connection-model';
+// import DataService from 'mongodb-data-service';
 
 
 describe('ClusterHealthStore [Store]', () => {
-  const dataService = new DataService(CONNECTION);
-  const appRegistry = new AppRegistry();
   
+  /* If you want to run any tests with a real DataService running. The
+     server will be started from package.json in the pretest and posttest
+     script.
+   */
+
+  // const CONNECTION = new Connection({
+  //   hostname: '127.0.0.1',
+  //   port: 27047,
+  //   ns: 'compass-cluster-health-test'
+  // });
+  // const dataService = new DataService(CONNECTION);
+  // const appRegistry = new AppRegistry();
   // before((done) => {
   //   appRegistry.registerStore('ClusterHealth.Store', store);
   //   store.onActivated(appRegistry);
