@@ -57,6 +57,7 @@
     "react-vega-lite": "^1.1.2",
     "reflux": "^6.4.1",
     "reflux-state-mixin": "^0.7.0",
+    "sinon": "^3.3.0",
     "url-loader": "^0.6.2",
     "vega": "^3.0.6",
     "vega-lite": "^2.0.0-rc4"

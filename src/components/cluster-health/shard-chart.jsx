@@ -12,8 +12,8 @@ class ShardChart extends PureComponent {
     totalSize: PropTypes.number,
     size: PropTypes.number,
     name: PropTypes.string,
-    isMemberDown: PropTypes.boolean,
-    hasPrimary: PropTypes.boolean
+    isMemberDown: PropTypes.bool,
+    hasPrimary: PropTypes.bool
   };
 
   constructor(props) {
